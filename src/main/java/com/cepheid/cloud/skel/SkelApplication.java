@@ -3,6 +3,7 @@ package com.cepheid.cloud.skel;
 import com.cepheid.cloud.skel.controller.ItemController;
 import com.cepheid.cloud.skel.model.Description;
 import com.cepheid.cloud.skel.model.Item;
+import com.cepheid.cloud.skel.model.State;
 import com.cepheid.cloud.skel.repository.DescriptionRepository;
 import com.cepheid.cloud.skel.repository.ItemRepository;
 import org.springframework.boot.ApplicationRunner;
@@ -11,6 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
+import java.awt.*;
 import java.beans.Statement;
 import java.util.Collection;
 import java.util.Collections;
@@ -35,7 +37,7 @@ public class SkelApplication {
                     .forEach(string -> {
                         StringTokenizer tokenizer = new StringTokenizer(string, ":");
                         if (tokenizer.hasMoreElements()) {
-                            Item item = new Item(tokenizer.nextToken(), tokenizer.nextToken());
+                            Item item = new Item(tokenizer.nextToken(), State.valueOf(tokenizer.nextToken()));
                             Description description = new Description(tokenizer.nextToken(), tokenizer.nextToken(), item);
                             item.setDescriptions(Collections.singleton(description));
                             itemRepository.save(item);

@@ -1,6 +1,9 @@
 package com.cepheid.cloud.skel;
 
-import java.net.URI;
+import org.glassfish.jersey.media.multipart.MultiPartFeature;
+import org.junit.Before;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import javax.annotation.PostConstruct;
 import javax.ws.rs.client.Client;
@@ -9,43 +12,45 @@ import javax.ws.rs.client.Invocation.Builder;
 import javax.ws.rs.client.WebTarget;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
-
-import org.glassfish.jersey.media.multipart.MultiPartFeature;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
+import java.net.URI;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, classes = {
-    SkelApplication.class })
+        SkelApplication.class})
 public class TestBase {
-  private String mServerUri;
-  
-  protected Client mClient;
+    private String mServerUri;
 
-  @Value("${server.port}")
-  protected int mPort;
+    protected Client mClient;
 
-  @PostConstruct
-  public void postConstruct() {
-    mServerUri = "http://localhost:" + mPort;
-    mClient = createClient();
-  }
+    protected Builder itemController;
 
-  
-  public Builder getBuilder(String path, Object... values) {
-    URI uri = UriBuilder.fromUri(mServerUri + path).build(values);
+    @Value("${server.port}")
+    protected int mPort;
 
-    WebTarget webTarget = mClient.target(uri);
-    webTarget = webTarget.register(MultiPartFeature.class);
+    @PostConstruct
+    public void postConstruct() {
+        mServerUri = "http://localhost:" + mPort;
+        mClient = createClient();
+    }
 
-    Builder builder = webTarget.request(MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_OCTET_STREAM_TYPE);
 
-    return builder;
-  }
+    public Builder getBuilder(String path, Object... values) {
+        URI uri = UriBuilder.fromUri(mServerUri + path).build(values);
 
-  protected Client createClient() {
-    ClientBuilder clientBuilder = ClientBuilder.newBuilder();
-    return clientBuilder.build();
-  }
-  
-  
+        WebTarget webTarget = mClient.target(uri);
+        webTarget = webTarget.register(MultiPartFeature.class);
+
+        Builder builder = webTarget.request(MediaType.APPLICATION_JSON_TYPE, MediaType.APPLICATION_OCTET_STREAM_TYPE);
+
+        return builder;
+    }
+
+    protected Client createClient() {
+        ClientBuilder clientBuilder = ClientBuilder.newBuilder();
+        return clientBuilder.build();
+    }
+
+    @Before
+    public void init() {
+
+    }
 }

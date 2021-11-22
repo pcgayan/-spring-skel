@@ -15,9 +15,10 @@ public class Item extends AbstractEntity {
     private String title;
 
     @Column(nullable = false)
-    private String state;
+    @Enumerated(EnumType.STRING)
+    private State state;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "item", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "item", cascade = CascadeType.ALL)
     private Set<Description> descriptions;
 
     // JPA usage only
@@ -25,7 +26,7 @@ public class Item extends AbstractEntity {
 
     }
 
-    public Item(@NotNull String title, @NotNull String state) {
+    public Item(@NotNull String title, State state) {
         this.title = title;
         this.state = state;
         this.createdTimeStamp = Timestamp.valueOf(LocalDateTime.now());
@@ -44,11 +45,6 @@ public class Item extends AbstractEntity {
     public int hashCode() {
         return Objects.hash(super.hashCode(), title, state);
     }
-
-    /*@Override
-    public String toString() {
-        return title;
-    }*/
 
     public void setDescriptions(@NotNull Set<Description> descriptions) {
         this.descriptions = descriptions;
