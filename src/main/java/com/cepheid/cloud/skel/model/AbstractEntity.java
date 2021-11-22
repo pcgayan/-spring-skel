@@ -1,50 +1,45 @@
 package com.cepheid.cloud.skel.model;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.Objects;
 
 @MappedSuperclass
 public abstract class AbstractEntity {
 
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  protected Long mId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    protected Long id;
 
-  public Long getId() {
-    return mId;
-  }
-  
-  public void setId(Long id) {
-    mId = id;
-  }
+    @Version
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    protected Integer version;
 
-  @Override
-  public int hashCode() {
-    final int prime = 31;
-    int result = 1;
-    result = prime * result + ((mId == null) ? 0 : mId.hashCode());
-    return result;
-  }
+    protected Timestamp createdTimeStamp;
 
-  @Override
-  public boolean equals(Object obj) {
-    if (this == obj)
-      return true;
-    if (obj == null)
-      return false;
-    if (getClass() != obj.getClass())
-      return false;
-    AbstractEntity other = (AbstractEntity) obj;
-    if (mId == null) {
-      if (other.mId != null)
-        return false;
+    public Long getId() {
+        return id;
     }
-    else if (!mId.equals(other.mId))
-      return false;
-    return true;
-  }
-  
-  
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public Timestamp getCreatedTimeStamp() {
+        return createdTimeStamp;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        AbstractEntity that = (AbstractEntity) o;
+        return Objects.equals(id, that.id) && Objects.equals(getVersion(), that.getVersion()) && Objects.equals(getCreatedTimeStamp(), that.getCreatedTimeStamp());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, getVersion(), getCreatedTimeStamp());
+    }
 }

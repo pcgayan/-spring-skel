@@ -17,7 +17,7 @@ public class ItemControllerTest extends TestBase {
   @Test
   public void testGetItems() throws Exception {
     Builder itemController = getBuilder("/app/api/1.0/items");
-    
+
     Collection<Item> items = itemController.get(new GenericType<Collection<Item>>() {
     });
 
