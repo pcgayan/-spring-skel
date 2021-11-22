@@ -2,28 +2,24 @@ package com.cepheid.cloud.skel.controller;
 
 import com.cepheid.cloud.skel.model.Item;
 import com.cepheid.cloud.skel.service.ItemService;
-import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
-import javax.ws.rs.*;
+import javax.inject.Singleton;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.util.Collection;
 
-
-// curl http:/localhost:9443/app/api/1.0/items
-
 @Component
-@Path("/api/1.0/items")
-@Api()
-@Produces(MediaType.APPLICATION_JSON)
+@RestController
+@CrossOrigin
+@Singleton
 public class ItemController {
     private final ItemService itemService;
 
@@ -32,33 +28,51 @@ public class ItemController {
         this.itemService = itemService;
     }
 
-    @GET
+    // curl -X GET "http://localhost:9443/api/2.0/items/find"
+    @RequestMapping(value = "/api/2.0/items/find", method = RequestMethod.GET)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public Collection<Item> getItems() {
+    Collection<Item> getItemIdById() {
         return itemService.getAllItems();
     }
 
-    @GetMapping("/{id}")
+    // curl -X GET "http://localhost:9443/api/2.0/items/find/4"
+    @RequestMapping(value = "/api/2.0/items/find/{id}", method = RequestMethod.GET)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
-    public Item getItemById(@PathVariable Long id) {
+    Item getItemIdById(@PathVariable(name = "id", required = false) Long id) {
         return itemService.getASingleItem(id);
     }
 
-    @PUT
+    // curl -X GET "http://localhost:9443/api/2.0/items/findByTitle/Hobbit"
+    @RequestMapping(value = "/api/2.0/items/findByTitle/{title}", method = RequestMethod.GET)
     @Produces(MediaType.APPLICATION_JSON)
     @Transactional(readOnly = true, propagation = Propagation.REQUIRED)
+    Item getItemIdById(@PathVariable(name = "title") String title) {
+        return itemService.getASingleItemByTitle(title);
+    }
+
+    // curl -X PUT -v "http://localhost:9443/api/2.0/items/add" -H 'Content-type:application/json' -d '{"title": "007", "state": "valid"}'
+    @RequestMapping(value = "/api/2.0/items/add", method = RequestMethod.PUT)
+    @Consumes(MediaType.APPLICATION_JSON)
     public ResponseEntity<?> addItem(@RequestBody Item item) {
-        itemService.add(item);
-        return new ResponseEntity<>(HttpStatus.OK);
+        try {
+            itemService.add(item);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
-    @DELETE
-    @Produces(MediaType.APPLICATION_JSON)
-    public ResponseEntity<?> deleteItemById(@PathVariable Long id) {
-        itemService.deleteItem(id);
-        return new ResponseEntity<>(HttpStatus.OK);
+    // curl -X DELETE "http://localhost:9443/api/2.0/items/delete/4"
+    @RequestMapping(value = "/api/2.0/items/delete/{id}", method = RequestMethod.DELETE)
+    @Consumes(MediaType.APPLICATION_JSON)
+    public ResponseEntity<?> deleteItemById(@PathVariable(name = "id") Long id) {
+        try {
+            itemService.deleteItem(id);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
-
 }

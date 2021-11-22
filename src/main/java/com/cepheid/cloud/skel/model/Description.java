@@ -15,7 +15,7 @@ public class Description extends AbstractEntity {
     @Column(nullable = false)
     private String type;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name="item_id", nullable = false)
     private Item item;
 
@@ -30,6 +30,14 @@ public class Description extends AbstractEntity {
         this.createdTimeStamp = Timestamp.valueOf(LocalDateTime.now());
 
         this.item = item;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getType() {
+        return type;
     }
 
     @Override

@@ -18,7 +18,7 @@ public class Item extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     private State state;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "item", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "item", cascade = CascadeType.ALL)
     private Set<Description> descriptions;
 
     // JPA usage only
@@ -30,6 +30,14 @@ public class Item extends AbstractEntity {
         this.title = title;
         this.state = state;
         this.createdTimeStamp = Timestamp.valueOf(LocalDateTime.now());
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public State getState() {
+        return state;
     }
 
     @Override

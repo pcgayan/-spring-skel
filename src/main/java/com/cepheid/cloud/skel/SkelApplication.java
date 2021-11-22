@@ -12,15 +12,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
-import java.awt.*;
-import java.beans.Statement;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.StringTokenizer;
 import java.util.stream.Stream;
 
 @SpringBootApplication(scanBasePackageClasses = {ItemController.class, SkelApplication.class})
-@EnableJpaRepositories(basePackageClasses = {ItemRepository.class})
+@EnableJpaRepositories(basePackageClasses = {ItemRepository.class, DescriptionRepository.class})
 public class SkelApplication {
 
     public static void main(String[] args) {
@@ -46,6 +43,8 @@ public class SkelApplication {
                     });
 
             itemRepository.findAll().forEach(System.out::println);
+
+            itemRepository.findByState(State.valid).forEach(System.out::println);
         };
     }
 
